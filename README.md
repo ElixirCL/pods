@@ -35,6 +35,7 @@ A _Babashka Pod_ must follow some simple rules:
 
 Babashka’s pod system lets you interact with external processes using _Elixir_ functions, as opposed to shelling out with `System.cmd` or making HTTP requests, or something like that. Those external processes are called pods and must implement the pod protocol to tell client programs how to interact with them.
 
+- https://www.youtube.com/watch?v=Q3EFNRwxLLo
 - https://www.braveclojure.com/quests/babooka/
 - https://book.babashka.org/
 
@@ -60,98 +61,97 @@ Compiling 1 file (.ex)
 
 22:08:45.983 [info] describe
 %{
-  message: %{id: "018f0ddc-cfb6-7173-b501-d5dc64be1e8d", op: "describe"},
-  pid: 41244,
-  response: :ok
+message: %{id: "018f0ddc-cfb6-7173-b501-d5dc64be1e8d", op: "describe"},
+pid: 41244,
+response: :ok
 }
 
 22:08:46.031 [info] execute!
 
 22:08:46.031 [debug] create table if not exists foo ( int foo )
 %{
-  message: %{
-    args: "[\"create table if not exists foo ( int foo )\"]",
-    id: "018f0ddc-cfcf-718f-a7ac-6a81716b2bfd",
-    op: "invoke",
-    var: "pod.lispyclouds.sqlite/execute!"
-  },
-  pid: 41244,
-  response: :ok
+message: %{
+args: "[\"create table if not exists foo ( int foo )\"]",
+id: "018f0ddc-cfcf-718f-a7ac-6a81716b2bfd",
+op: "invoke",
+var: "pod.lispyclouds.sqlite/execute!"
+},
+pid: 41244,
+response: :ok
 }
 
 22:08:46.040 [info] execute!
 %{
-  message: %{
-    args: "[\"delete from foo\"]",
-    id: "018f0ddc-cfd9-7675-80f2-0eb70259cad8",
-    op: "invoke",
-    var: "pod.lispyclouds.sqlite/execute!"
-  },
-  pid: 41244,
-  response: :ok
+message: %{
+args: "[\"delete from foo\"]",
+id: "018f0ddc-cfd9-7675-80f2-0eb70259cad8",
+op: "invoke",
+var: "pod.lispyclouds.sqlite/execute!"
+},
+pid: 41244,
+response: :ok
 }
 
 22:08:46.041 [debug] delete from foo
 
 22:08:46.041 [info] execute!
 %{
-  message: %{
-    args: "[\"insert into foo values (1), (2)\"]",
-    id: "018f0ddc-cfd9-79b8-b6e3-1c47f93ee383",
-    op: "invoke",
-    var: "pod.lispyclouds.sqlite/execute!"
-  },
-  pid: 41244,
-  response: :ok
+message: %{
+args: "[\"insert into foo values (1), (2)\"]",
+id: "018f0ddc-cfd9-79b8-b6e3-1c47f93ee383",
+op: "invoke",
+var: "pod.lispyclouds.sqlite/execute!"
+},
+pid: 41244,
+response: :ok
 }
 
 22:08:46.041 [debug] insert into foo values (1), (2)
 
 22:08:46.041 [info] execute!
 
-22:08:46.042 [debug] select * from foo
+22:08:46.042 [debug] select _ from foo
 %{
-  message: %{
-    args: "[\"select * from foo\"]",
-    id: "018f0ddc-cfda-7fef-a162-ced1468741e0",
-    op: "invoke",
-    var: "pod.lispyclouds.sqlite/execute!"
-  },
-  pid: 41244,
-  response: :ok
+message: %{
+args: "[\"select _ from foo\"]",
+id: "018f0ddc-cfda-7fef-a162-ced1468741e0",
+op: "invoke",
+var: "pod.lispyclouds.sqlite/execute!"
+},
+pid: 41244,
+response: :ok
 }
 Interactive Elixir (1.15.7) - press Ctrl+C to exit (type h() ENTER for help)
 iex(1)> %{
-  "format" => "json",
-  "namespaces" => [
-    %{"name" => "pod.lispyclouds.sqlite", "vars" => [%{"name" => "execute!"}]}
-  ]
+"format" => "json",
+"namespaces" => [
+%{"name" => "pod.lispyclouds.sqlite", "vars" => [%{"name" => "execute!"}]}
+]
 }
 %{
-  :result => [],
-  "id" => "018f0ddc-cfcf-718f-a7ac-6a81716b2bfd",
-  "status" => ["done"],
-  "value" => "[]"
+:result => [],
+"id" => "018f0ddc-cfcf-718f-a7ac-6a81716b2bfd",
+"status" => ["done"],
+"value" => "[]"
 }
 %{
-  :result => [],
-  "id" => "018f0ddc-cfd9-7675-80f2-0eb70259cad8",
-  "status" => ["done"],
-  "value" => "[]"
+:result => [],
+"id" => "018f0ddc-cfd9-7675-80f2-0eb70259cad8",
+"status" => ["done"],
+"value" => "[]"
 }
 %{
-  :result => [],
-  "id" => "018f0ddc-cfd9-79b8-b6e3-1c47f93ee383",
-  "status" => ["done"],
-  "value" => "[]"
+:result => [],
+"id" => "018f0ddc-cfd9-79b8-b6e3-1c47f93ee383",
+"status" => ["done"],
+"value" => "[]"
 }
 %{
-  :result => [[1], [2]],
-  "id" => "018f0ddc-cfda-7fef-a162-ced1468741e0",
-  "status" => ["done"],
-  "value" => "[[1], [2]]"
+:result => [[1], [2]],
+"id" => "018f0ddc-cfda-7fef-a162-ced1468741e0",
+"status" => ["done"],
+"value" => "[[1], [2]]"
 }
-
 ```
 
 ## Tecnologies

@@ -1,17 +1,27 @@
 defmodule Pods.LispyClouds.SQLite do
+  # the directory of the pod
   @namespace "pod-lispyclouds-sqlite"
+
+  # the script that will be run, must have execution permissions (655)
+  @script "#{@namespace}.py"
+
+  # the prefix for the commands that the script expects
+  # example command: pod.lispyclouds.sqlite/execute!
+  @prefix "pod.lispyclouds.sqlite"
 
   require Logger
 
   def start(callback \\ nil, opts \\ []) do
+    Logger.info("Starting #{__MODULE__} Pod")
+
     Pods.load(
-      "#{@namespace}.py",
+      __MODULE__,
+      @namespace,
+      @prefix,
+      @script,
       callback ||
-        fn _origin, _pid, response ->
-          Map.merge(response, case Map.get(response, "value") do
-            nil -> %{}
-            value -> %{result: Jason.decode!(value)}
-          end)
+        fn response ->
+          response
           |> IO.inspect()
         end,
       opts
@@ -19,17 +29,14 @@ defmodule Pods.LispyClouds.SQLite do
   end
 
   def describe(pods) do
-    Logger.info("describe")
+    Logger.debug("describe")
     Pods.call(pods, @namespace, "describe")
-    |> IO.inspect()
     pods
   end
 
   def invoke(pods, command, args \\ []) do
-    Logger.info(command)
-    Logger.debug(args)
+    Logger.debug(command)
     Pods.call(pods, @namespace, "invoke", command, args)
-    |> IO.inspect()
     pods
   end
 

@@ -9,7 +9,6 @@ defmodule Pods.Application do
   def start(_type, _args) do
     # Example
     Pods.start([Pods.LispyClouds.SQLite.start()])
-    |> Pods.LispyClouds.SQLite.describe()
     |> Pods.LispyClouds.SQLite.execute!("create table if not exists foo ( int foo )")
     |> Pods.LispyClouds.SQLite.execute!("delete from foo")
     |> Pods.LispyClouds.SQLite.execute!("insert into foo values (1), (2)")

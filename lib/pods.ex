@@ -8,12 +8,8 @@ defmodule Pods do
     Map.get(pods, String.to_existing_atom(md5(namespace)))
   end
 
-  def load(name, callback, opts \\ []) do
-    dirname =
-      name
-      |> String.replace(Path.extname(name), "")
-
-    path = Path.expand(Path.join([".", "pods", dirname, name]))
+  def load(module, namespace, prefix, script, callback, opts \\ []) do
+    path = Path.expand(Path.join([".", "pods", namespace, script]))
 
     {:ok, _, pid} =
       :exec.run_link(
@@ -23,16 +19,53 @@ defmodule Pods do
           {:stderr, :stdout},
           {:stdout,
            fn origin, pid, response ->
-             callback.(origin, pid, Bento.decode!(response))
+             decoded_response = Bento.decode!(response)
+
+             result =
+               case Map.get(decoded_response, "value") do
+                 nil -> []
+                 value -> Jason.decode!(value)
+               end
+
+             status =
+               case Map.get(decoded_response, "status") do
+                 nil ->
+                   :ok
+
+                 value ->
+                   case List.first(value) do
+                     "done" -> :ok
+                     _ -> :error
+                   end
+               end
+
+             id = Map.get(decoded_response, "id", pid)
+
+             final_response = %{
+               module: module,
+               namespace: namespace,
+               prefix: prefix,
+               script: script,
+               id: id,
+               origin: origin,
+               pid: pid,
+               body: result,
+               status: status,
+               response: decoded_response
+             }
+
+             callback.(final_response)
            end},
           :monitor
         ] ++ opts
       )
 
     %{
-      "#{md5(dirname)}": %{
-        namespace: dirname,
-        script: name,
+      "#{md5(namespace)}": %{
+        module: module,
+        namespace: namespace,
+        prefix: prefix,
+        script: script,
         path: path,
         pid: pid
       }
@@ -43,11 +76,20 @@ defmodule Pods do
     :exec.start()
 
     pods
-    |> Enum.reduce(%{}, fn pod, acc -> Map.merge(acc, pod) end)
+    |> Enum.reduce(%{}, fn pod, acc ->
+      registry = Map.merge(acc, pod)
+
+      # Call describe as the first input/output message
+      for {_k, value} <- pod do
+        value.module.describe(registry)
+      end
+
+      registry
+    end)
   end
 
-  def send_to_pod(pid, message) do
-    %{pid: pid, message: message, response: :exec.send(pid, Bento.encode!(message))}
+  def send_to_pod(pod, message) do
+    %{pod: pod, message: message, response: :exec.send(pod.pid, Bento.encode!(message))}
   end
 
   def call(pods, namespace, "describe") do
@@ -59,12 +101,13 @@ defmodule Pods do
         id: UUIDv7.generate()
       }
 
-    send_to_pod(pod.pid, message)
+    send_to_pod(pod, message)
   end
 
   def call(pods, namespace, "invoke", command, args \\ []) do
     pod = get(pods, namespace)
-    var = "#{String.replace(namespace, "-", ".")}/#{command}"
+
+    var = "#{pod.prefix}/#{command}"
 
     message =
       %{
@@ -81,6 +124,6 @@ defmodule Pods do
           )
       }
 
-    send_to_pod(pod.pid, message)
+    send_to_pod(pod, message)
   end
 end
