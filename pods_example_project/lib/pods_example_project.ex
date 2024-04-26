@@ -1,0 +1,2 @@
+defmodule PodsExampleProject do
+end

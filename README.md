@@ -1,45 +1,161 @@
-# Elixir Babashka Pods
+# Elixir Pods
 
 This is a simple proof of concept.
-The idea is using [Babashka Pods](https://github.com/babashka/pods/).
+The idea is emulating [Babashka Pods](https://github.com/babashka/pods/).
 
-_Babashka Pods_ enables using external services that can be writen in any programming language.
+_Elixir Pods_ enables using external services that can be writen in any programming language.
 It's not required that the program has a _CLI_, since a script is created that interacts with the internal _SDK_.
-_Babashka Pods_ are standalone programs that can expose namespaces with vars to _Elixir_.
+_Elixir Pods_ are standalone programs that can expose namespaces with vars to _Elixir_.
 
 The example is taken from [LispyClouds SQLite](https://github.com/babashka/pods/tree/master/examples/pod-lispyclouds-sqlite)
 a simple `sqlite3` wrapper that can execute commands, programmed in _python_.
 
 Example usage:
 
+You can check the [Example Project](pods_example_project) to see how
+can _Pods_ be implemented in an Elixir Project.
+
 ```elixir
-Pods.start([Pods.LispyClouds.SQLite.start()])
-|> Pods.LispyClouds.SQLite.describe()
-|> Pods.LispyClouds.SQLite.execute!("create table if not exists foo ( int foo )")
-|> Pods.LispyClouds.SQLite.execute!("delete from foo")
-|> Pods.LispyClouds.SQLite.execute!("insert into foo values (1), (2)")
-|> Pods.LispyClouds.SQLite.execute!("select * from foo")
+Pods.Core.start(
+  # Available Pods List
+  [Pod.LispyClouds.SQLite],
+  # Pod Manager
+  Pods.ProcessManager,
+  # Message Encoder
+  PodsExampleProject.Encoder,
+  # Message Decoder
+  PodsExampleProject.Decoder,
+  # stdout and stderr handler
+  PodsExampleProject.Handler
+)
+|> Pod.LispyClouds.SQLite.execute!("create table if not exists foo ( int foo )")
+|> Pod.LispyClouds.SQLite.execute!("delete from foo")
+|> Pod.LispyClouds.SQLite.execute!("insert into foo values (1), (2)")
+|> Pod.LispyClouds.SQLite.execute!("select * from foo")
 ```
 
-A _Babashka Pod_ must follow some simple rules:
+Note how every component is fully customizable, so you can implement
+those with your own tools and configurations.
+
+An _Elixir Pod_ must follow some simple rules:
 
 - An infinite function (`while true`).
 - Reads from `stdin` (in streaming mode).
-- Writes to `stdout`.
+- Writes to `stdout` and `stderr`.
 - Follows [Babashka Pods](https://github.com/babashka/pods/) format.
 - At least implements the `describe` and `invoke` operators.
 - Encodes messages with [bencode](https://en.wikipedia.org/wiki/Bencode).
-- Encodes params with _JSON_.
+- Encodes payload with _JSON_ (or transit+json).
+
+### Example Codes
+
+- [LispyClouds SQLite Python Pod](pod_lispyclouds_sqlite): A Pod made in Python
+- [Pods Core](pods_core): Handles the boilerplate for a Pod Client
+- [Pod Process Manager]: Handles `stdio` and starts the Pods services.
+- [Pods Example Project]: Implements the encoder, decoder, handler and initial config for the core, process manager and pods.
 
 ### Why?
 
-Babashka’s pod system lets you interact with external processes using _Elixir_ functions, as opposed to shelling out with `System.cmd` or making HTTP requests, or something like that. Those external processes are called pods and must implement the pod protocol to tell client programs how to interact with them.
+Elixir Pods system lets you interact with external processes using _Elixir_ functions, as opposed to shelling out with `System.cmd`, `Erlang Ports` or making HTTP requests, or something like that. Those external processes are called pods and must implement the pod protocol to tell client programs how to interact with them.
 
 - https://www.youtube.com/watch?v=Q3EFNRwxLLo
 - https://www.braveclojure.com/quests/babooka/
 - https://book.babashka.org/
 
+#### Is this gRPC?
+
+Good question. Surely other similar protocols can be used
+for calling different technologies and expose their awesome features.
+
+This is another alternative that uses standarized and battle tested tools
+such as `stdout`, `stderr`, `stdin` and `mix`.
+
+The communication is handled by using
+
+- Bencode (Used by Bitorrent) so messages in `stdio` are more lightweight than raw text.
+- JSON.
+
+The main idea is simplying the distribution of ready to use `pods`,
+for technologies that:
+
+1. Are not available as _CLI_ or it needs custom business logic that is not practical to be implemented in Elixir (Old SOAP APIs?, custom vendor artifacts, etc).
+2. Are not available as _NIF_.
+3. Other reasons for fun and profit?.
+
+#### Why not Erlang Ports?
+
+The problem with _Erlang Ports_ is zombie processes and that not every
+technology has a proper _CLI_. With this approach you can implement
+a simple communication interface using standard tools.
+
+More details about problems with Erlang Ports in the awesome lib
+
+- https://github.com/fhunleth/muontrap
+
+The example process manager uses https://github.com/saleyn/erlexec/
+but you can implement the pod services using `System.cmd` or `Erlang Ports`
+or any other solution if you want.
+
+The only requirement is that it can allow `stdin` and `stdout` interactions.
+
+#### Implementing a Pod
+
+You can implement the pods with any technology and a simple Elixir wrapper to expose their API.
+
+- `artifacts`: The directory where the external code executables will be stored.
+- `pod.ex`: The main public api for the pod.
+- `manifest.ex`: Some helper functions to have more information about the pod.
+
+If you want to debug you can use standard tools such as stdin and stdout. In Unix systems you can access by using (1 stdout, 2 stderr).
+
+```bash
+  cat /proc/<pid>/fd/1
+```
+
+Also some hooks are triggered.
+
+```elixir
+defmodule PodsExampleProject.Handler do
+  def on_pod_ready(pod, message) do
+    IO.inspect([pod, message], label: :on_pod_ready)
+  end
+
+  def on_before_call(_registry, pod, message, op) do
+    IO.inspect(pod.pid, label: op)
+    IO.inspect(message, label: :on_before_call)
+  end
+
+  def out(response) do
+    IO.inspect(response, label: :out)
+  end
+
+  def error(response) do
+    IO.inspect(response, label: :error)
+  end
+end
+```
+
+Then you can import the pod using our beloved `mix`.
+
+```elixir
+defp deps do
+  [
+    # bencode
+    {:bento, "~> 1.0"},
+    # json
+    {:jason, "~> 1.4"},
+    {:pods_core, path: "../pods_core"},
+    {:pods_process_manager, path: "../pods_process_manager"},
+    {:pod_lispyclouds_sqlite, path: "../pod_lispyclouds_sqlite"}
+  ]
+end
+```
+
 ## Installation
+
+```bash
+cd pods_example_project
+```
 
 ```bash
 mix deps.get
@@ -51,112 +167,18 @@ mix deps.get
 iex -S mix
 ```
 
-**Example Output**
-
-```markdown
-$ iex -S mix
-Erlang/OTP 25 [erts-13.2.2.7] [source] [64-bit] [smp:4:4] [ds:4:4:10] [async-threads:1] [jit:ns]
-
-Compiling 1 file (.ex)
-
-22:08:45.983 [info] describe
-%{
-message: %{id: "018f0ddc-cfb6-7173-b501-d5dc64be1e8d", op: "describe"},
-pid: 41244,
-response: :ok
-}
-
-22:08:46.031 [info] execute!
-
-22:08:46.031 [debug] create table if not exists foo ( int foo )
-%{
-message: %{
-args: "[\"create table if not exists foo ( int foo )\"]",
-id: "018f0ddc-cfcf-718f-a7ac-6a81716b2bfd",
-op: "invoke",
-var: "pod.lispyclouds.sqlite/execute!"
-},
-pid: 41244,
-response: :ok
-}
-
-22:08:46.040 [info] execute!
-%{
-message: %{
-args: "[\"delete from foo\"]",
-id: "018f0ddc-cfd9-7675-80f2-0eb70259cad8",
-op: "invoke",
-var: "pod.lispyclouds.sqlite/execute!"
-},
-pid: 41244,
-response: :ok
-}
-
-22:08:46.041 [debug] delete from foo
-
-22:08:46.041 [info] execute!
-%{
-message: %{
-args: "[\"insert into foo values (1), (2)\"]",
-id: "018f0ddc-cfd9-79b8-b6e3-1c47f93ee383",
-op: "invoke",
-var: "pod.lispyclouds.sqlite/execute!"
-},
-pid: 41244,
-response: :ok
-}
-
-22:08:46.041 [debug] insert into foo values (1), (2)
-
-22:08:46.041 [info] execute!
-
-22:08:46.042 [debug] select _ from foo
-%{
-message: %{
-args: "[\"select _ from foo\"]",
-id: "018f0ddc-cfda-7fef-a162-ced1468741e0",
-op: "invoke",
-var: "pod.lispyclouds.sqlite/execute!"
-},
-pid: 41244,
-response: :ok
-}
-Interactive Elixir (1.15.7) - press Ctrl+C to exit (type h() ENTER for help)
-iex(1)> %{
-"format" => "json",
-"namespaces" => [
-%{"name" => "pod.lispyclouds.sqlite", "vars" => [%{"name" => "execute!"}]}
-]
-}
-%{
-:result => [],
-"id" => "018f0ddc-cfcf-718f-a7ac-6a81716b2bfd",
-"status" => ["done"],
-"value" => "[]"
-}
-%{
-:result => [],
-"id" => "018f0ddc-cfd9-7675-80f2-0eb70259cad8",
-"status" => ["done"],
-"value" => "[]"
-}
-%{
-:result => [],
-"id" => "018f0ddc-cfd9-79b8-b6e3-1c47f93ee383",
-"status" => ["done"],
-"value" => "[]"
-}
-%{
-:result => [[1], [2]],
-"id" => "018f0ddc-cfda-7fef-a162-ced1468741e0",
-"status" => ["done"],
-"value" => "[[1], [2]]"
-}
-```
-
 ## Tecnologies
 
 - https://github.com/saleyn/erlexec/
 - https://github.com/folz/bento
 - https://github.com/michalmuskala/jason
 - https://github.com/martinthenth/uuidv7
+
+## Credits
+
+<p>
+  Made with <i class="fa fa-heart">&#9829;</i> by
+  <a href="https://ninjas.cl">
+    Ninjas.cl
+  </a>.
+</p>
