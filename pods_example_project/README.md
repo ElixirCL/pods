@@ -1,21 +1,11 @@
 # PodsExampleProject
 
-**TODO: Add description**
+This is an example project that calls the Pods
+and implements the:
 
-## Installation
+- stdin handler
+- encoder
+- decoders
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `pods_example_project` to your list of dependencies in `mix.exs`:
-
-```elixir
-def deps do
-  [
-    {:pods_example_project, "~> 0.1.0"}
-  ]
-end
-```
-
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at <https://hexdocs.pm/pods_example_project>.
-
+This is an example on how the pods can be used
+within your project.

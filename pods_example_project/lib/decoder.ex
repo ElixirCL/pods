@@ -1,4 +1,9 @@
 defmodule PodsExampleProject.Decoder do
+
+  def decode(content, :bencode) do
+    Bento.decode(content)
+  end
+
   def decode!(content, :bencode) do
     Bento.decode!(content)
   end
@@ -7,8 +12,7 @@ defmodule PodsExampleProject.Decoder do
     Jason.decode!(content)
   end
 
-  def decode(_content, "transit+json") do
-    # not implemented yet
-    :noop
+  def decode!(content, "transit+json") do
+    :transit.read(content, %{format: :json_verbose})
   end
 end

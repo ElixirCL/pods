@@ -7,8 +7,7 @@ defmodule PodsExampleProject.Encoder do
     Jason.encode!(content)
   end
 
-  def encode(_content, "transit+json") do
-    # not implemented yet
-    :noop
+  def encode!(content, "transit+json") do
+    :transit.write(content, %{format: :json_verbose})
   end
 end

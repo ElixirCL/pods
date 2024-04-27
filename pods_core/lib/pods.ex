@@ -46,6 +46,7 @@ defmodule Pods.Core do
         pod = module.setup()
 
         decode_out = fn %{origin: origin, pid: pid, response: response} = raw ->
+
           decoded_response = decoder.decode!(response, :bencode)
 
           result =
@@ -100,6 +101,7 @@ defmodule Pods.Core do
           pid:
             manager.load(
               module.manifest().executable(os_type()),
+              decoder,
               decode_out,
               decode_error,
               module.opts()

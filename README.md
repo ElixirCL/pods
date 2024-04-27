@@ -82,15 +82,7 @@ for technologies that:
 2. Are not available as _NIF_.
 3. Other reasons for fun and profit?.
 
-#### Why not Erlang Ports?
-
-The problem with _Erlang Ports_ is zombie processes and that not every
-technology has a proper _CLI_. With this approach you can implement
-a simple communication interface using standard tools.
-
-More details about problems with Erlang Ports in the awesome lib
-
-- https://github.com/fhunleth/muontrap
+### Starting Pods
 
 The example process manager uses https://github.com/saleyn/erlexec/
 but you can implement the pod services using `System.cmd` or `Erlang Ports`
@@ -150,6 +142,11 @@ defp deps do
   ]
 end
 ```
+
+##### Examples
+
+- [Simple Pod](pod_lispyclouds_sqlite): Just a simple python script
+- [Advanced Pod](pod_babashka_sqlite3): A program that requires installation pipeline
 
 ## Installation
 

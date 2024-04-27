@@ -3,6 +3,8 @@ defmodule Pod.LispyClouds.SQLite.Manifest do
   Stores the information for the pod
   """
 
+  def version, do: "1.0.0"
+
   @doc """
     Returns the namespace that will be used when invoking the commands
     Example: pod.lispyclouds.sqlite/execute!
@@ -24,7 +26,9 @@ defmodule Pod.LispyClouds.SQLite.Manifest do
   @doc """
     The executable artifact that will be returned
     depending on the requested os and arch params.
-    values are from :os.type() and :erlang.system_info(:system_architecture)
+    values are from :os.type() and :erlang.system_info(:system_architecture).
+    This do not need to be installed in pods directory, since is just a python script.
+    and is not handled by babashka pods.
   """
   def executable(%{type: _type, os: _os, arch: _arch}),
     do:

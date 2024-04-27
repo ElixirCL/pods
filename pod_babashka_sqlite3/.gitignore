@@ -20,9 +20,7 @@ erl_crash.dump
 *.ez
 
 # Ignore package tarball (built via "mix hex.build").
-pods_example_project-*.tar
+pod_babashka_hsqldb-*.tar
 
 # Temporary files, for example, from tests.
 /tmp/
-
-pods/

@@ -12,9 +12,10 @@ defmodule PodsExampleProject.Application do
       # {PodsExampleProject.Worker, arg}
     ]
 
-    Pods.Core.start(
+    pods = Pods.Core.start(
       # Available Pods List
-      [Pod.LispyClouds.SQLite],
+      [ Pod.LispyClouds.SQLite,
+        Pod.Babashka.SQLite3],
       # Pod Manager
       Pods.ProcessManager,
       # Message Encoder
@@ -24,10 +25,24 @@ defmodule PodsExampleProject.Application do
       # stdout and stderr handler
       PodsExampleProject.Handler
     )
+
+    pods
     |> Pod.LispyClouds.SQLite.execute!("create table if not exists foo ( int foo )")
     |> Pod.LispyClouds.SQLite.execute!("delete from foo")
     |> Pod.LispyClouds.SQLite.execute!("insert into foo values (1), (2)")
     |> Pod.LispyClouds.SQLite.execute!("select * from foo")
+
+
+    # This pod uses bencode features not supported by the parser
+    # so at least the describe command works.
+    # serves as an example of a more complex pod
+    # db = Pod.Babashka.SQLite3.db()
+    # pods
+    # |> Pod.Babashka.SQLite3.execute!(db, "create table if not exists foo ( int foo )")
+    # |> Pod.Babashka.SQLite3.execute!(db, "delete from foo")
+    # |> Pod.Babashka.SQLite3.execute!(db, "insert into foo values (1), (2)")
+    # |> Pod.Babashka.SQLite3.query(db, "select * from foo")
+
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options

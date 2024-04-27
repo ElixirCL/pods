@@ -3,8 +3,7 @@ defmodule PodsExampleProject.Handler do
     IO.inspect([pod, message], label: :on_pod_ready)
   end
 
-  def on_before_call(_registry, pod, message, op) do
-    IO.inspect(pod.pid, label: op)
+  def on_before_call(_registry, _pod, message, _op) do
     IO.inspect(message, label: :on_before_call)
   end
 
