@@ -1,0 +1,268 @@
+# Example Elixir Pods
+
+```elixir
+Mix.install([
+  {:pods, path: "./pods"},
+  {:pod_lispyclouds_sqlite, path: "./pods/example"},
+  {:erlexec, "~> 2.0"},
+  {:jason, "~> 1.4"},
+  {:bento, "~> 1.0"}
+])
+
+require Logger
+```
+
+## Example Client
+
+The example process manager uses https://github.com/saleyn/erlexec/
+but you can implement the pod services using `System.cmd` or `Erlang Ports`
+or any other solution if you want.
+
+The only requirement is that it can allow `stdin` and `stdout` interactions.
+
+```elixir
+defmodule Decoder do
+  use Pods.Decoder
+  def decode(message, "bencode"), do: Bento.decode(message)
+  def decode(message, "json"), do: Jason.decode(message)
+  def decode!(message, "bencode"), do: Bento.decode!(message)
+  def decode!(message, "json"), do: Jason.decode!(message)
+end
+
+defmodule Encoder do
+  use Pods.Encoder
+  def encode(message, "bencode"), do: Bento.encode(message)
+  def encode(message, "json"), do: Jason.encode(message)
+  def encode!(message, "bencode"), do: Bento.encode!(message)
+  def encode!(message, "json"), do: Jason.encode!(message)
+end
+
+defmodule Handler do
+  use Pods.Handler
+
+  def event(payload, type) do
+    Logger.info("Got Pod Event #{type}")
+    Logger.debug(payload)
+  end
+
+  def success(payload) do
+    Logger.info("Got Pod Success Response")
+    Logger.debug(payload)
+  end
+
+  def error(payload) do
+    Logger.info("Got Pod Error Response")
+    Logger.debug(payload)
+  end
+
+  def exception(payload) do
+    Logger.info("Got Pod Exception")
+    Logger.debug(payload)
+  end
+end
+
+defmodule Manager do
+  use Pods.Manager
+
+  def init() do
+    Logger.info("Manager started")
+    :exec.start()
+  end
+
+  def stop(pod) do
+    Logger.info("Stopping Pod #{pod.module}")
+    :exec.stop(pod.pid)
+  end
+
+  def send(pod, message) do
+    Logger.info("Sending Message to Pod #{pod.module}")
+    :exec.send(pod.pid, message)
+  end
+
+  def start(executable, decoder, out_handler, exception_handler, opts \\ []) do
+    temp_dir = System.tmp_dir!()
+    temp_file_stdout = Path.join([temp_dir, Path.basename(executable) <> ".stdout"])
+
+    # Some processes may write a lot of text (streams), so we try to decode a cache
+    # until it works and then send the data to the handler
+    # maybe a better solution exists, but it works for now.
+    # can be a genserver? or maybe mnesia?
+    stdout_watcher = fn origin, pid, response ->
+      File.write!(temp_file_stdout, response, [:append])
+
+      case decoder.decode(String.trim(File.read!(temp_file_stdout)), "bencode") do
+        {:ok, _data} ->
+          out_handler.(%{origin: origin, pid: pid, response: response})
+          File.rm_rf!(temp_file_stdout)
+
+        _ ->
+          nil
+      end
+    end
+
+    # exceptions may not be in bencode, so we send the raw response
+    stderr_watcher = fn origin, pid, response ->
+      exception_handler.(%{origin: origin, pid: pid, response: response})
+    end
+
+    # start the process with ELIXIR_POD in the env
+    case :exec.run_link(
+           executable,
+           [
+             :stdin,
+             {:stdout, stdout_watcher},
+             {:stderr, stderr_watcher},
+             :monitor,
+             {:env, [{"ELIXIR_POD", "1"}]}
+           ] ++ opts
+         ) do
+      {:ok, _, pid} -> {:ok, pid}
+      _ = error -> {:error, error}
+    end
+  end
+end
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+{:module, Manager, <<70, 79, 82, 49, 0, 0, 20, ...>>, {:start, 5}}
+```
+
+## Example Pod Usage
+
+```elixir
+# Start the Pods Services
+pods =
+  Pods.start(
+    # Available Pods List
+    [Pod.LispyClouds.SQLite],
+    # Pod Manager
+    Manager,
+    # Message Encoder
+    Encoder,
+    # Message Decoder
+    Decoder,
+    # stdout and stderr handler
+    Handler
+  )
+
+# Use the Pods
+pods
+|> Pod.LispyClouds.SQLite.execute!("create table if not exists foo ( int foo )")
+|> Pod.LispyClouds.SQLite.execute!("delete from foo")
+|> Pod.LispyClouds.SQLite.execute!("insert into foo values (1), (2)")
+|> Pod.LispyClouds.SQLite.execute!("select * from foo")
+|> then(fn pods ->
+  # Give a little time to complete the operations
+  receive do
+  after
+    2000 ->
+      Pods.stop(pods, :all)
+  end
+end)
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+
+16:01:26.921 [info] Manager started
+
+16:01:26.925 [info] Got Pod Event before_op
+
+16:01:26.925 [debug] [args: [], command: "", id: "018f35bf-658d-744e-90dd-36a92005b5f7", message: "d2:id36:018f35bf-658d-744e-90dd-36a92005b5f72:op8:describee", op: "describe", result: %{}, pod: %{module: Pod.LispyClouds.SQLite, pid: 7915, manifest: Pod.LispyClouds.SQLite.Manifest}]
+
+16:01:26.925 [info] Sending Message to Pod Elixir.Pod.LispyClouds.SQLite
+
+16:01:26.925 [info] Got Pod Event ready
+
+16:01:26.925 [debug] [args: [], command: "", id: "018f35bf-658d-744e-90dd-36a92005b5f7", message: "d2:id36:018f35bf-658d-744e-90dd-36a92005b5f72:op8:describee", op: "describe", result: :ok, pod: %{module: Pod.LispyClouds.SQLite, pid: 7915, manifest: Pod.LispyClouds.SQLite.Manifest}]
+
+16:01:26.926 [info] Invoke command in Pod
+
+16:01:26.926 [debug] [args: ["create table if not exists foo ( int foo )"], command: "execute!", module: Pod.LispyClouds.SQLite]
+
+16:01:26.926 [info] Got Pod Event before_op
+
+16:01:26.926 [debug] [args: ["create table if not exists foo ( int foo )"], command: "pod.lispyclouds.sqlite/execute!", id: "018f35bf-658e-7ac6-ad20-3eaadd97065d", message: "d4:args46:[\"create table if not exists foo ( int foo )\"]2:id36:018f35bf-658e-7ac6-ad20-3eaadd97065d2:op6:invoke3:var31:pod.lispyclouds.sqlite/execute!e", op: "invoke", result: %{}, pod: %{module: Pod.LispyClouds.SQLite, pid: 7915, manifest: Pod.LispyClouds.SQLite.Manifest}]
+
+16:01:26.926 [info] Sending Message to Pod Elixir.Pod.LispyClouds.SQLite
+
+16:01:26.927 [info] Got Pod Event after_op
+
+16:01:26.927 [debug] [args: ["create table if not exists foo ( int foo )"], command: "pod.lispyclouds.sqlite/execute!", id: "018f35bf-658e-7ac6-ad20-3eaadd97065d", message: "d4:args46:[\"create table if not exists foo ( int foo )\"]2:id36:018f35bf-658e-7ac6-ad20-3eaadd97065d2:op6:invoke3:var31:pod.lispyclouds.sqlite/execute!e", op: "invoke", result: :ok, pod: %{module: Pod.LispyClouds.SQLite, pid: 7915, manifest: Pod.LispyClouds.SQLite.Manifest}]
+
+16:01:26.927 [info] Invoke command in Pod
+
+16:01:26.927 [debug] [args: ["delete from foo"], command: "execute!", module: Pod.LispyClouds.SQLite]
+
+16:01:26.927 [info] Got Pod Event before_op
+
+16:01:26.927 [debug] [args: ["delete from foo"], command: "pod.lispyclouds.sqlite/execute!", id: "018f35bf-658f-761a-ad35-f9da6d1a0384", message: "d4:args19:[\"delete from foo\"]2:id36:018f35bf-658f-761a-ad35-f9da6d1a03842:op6:invoke3:var31:pod.lispyclouds.sqlite/execute!e", op: "invoke", result: %{}, pod: %{module: Pod.LispyClouds.SQLite, pid: 7915, manifest: Pod.LispyClouds.SQLite.Manifest}]
+
+16:01:26.927 [info] Sending Message to Pod Elixir.Pod.LispyClouds.SQLite
+
+16:01:26.928 [info] Got Pod Event after_op
+
+16:01:26.928 [debug] [args: ["delete from foo"], command: "pod.lispyclouds.sqlite/execute!", id: "018f35bf-658f-761a-ad35-f9da6d1a0384", message: "d4:args19:[\"delete from foo\"]2:id36:018f35bf-658f-761a-ad35-f9da6d1a03842:op6:invoke3:var31:pod.lispyclouds.sqlite/execute!e", op: "invoke", result: :ok, pod: %{module: Pod.LispyClouds.SQLite, pid: 7915, manifest: Pod.LispyClouds.SQLite.Manifest}]
+
+16:01:26.928 [info] Invoke command in Pod
+
+16:01:26.928 [debug] [args: ["insert into foo values (1), (2)"], command: "execute!", module: Pod.LispyClouds.SQLite]
+
+16:01:26.928 [info] Got Pod Event before_op
+
+16:01:26.928 [debug] [args: ["insert into foo values (1), (2)"], command: "pod.lispyclouds.sqlite/execute!", id: "018f35bf-6590-7694-a2f5-b45d6c1f3396", message: "d4:args35:[\"insert into foo values (1), (2)\"]2:id36:018f35bf-6590-7694-a2f5-b45d6c1f33962:op6:invoke3:var31:pod.lispyclouds.sqlite/execute!e", op: "invoke", result: %{}, pod: %{module: Pod.LispyClouds.SQLite, pid: 7915, manifest: Pod.LispyClouds.SQLite.Manifest}]
+
+16:01:26.928 [info] Sending Message to Pod Elixir.Pod.LispyClouds.SQLite
+
+16:01:26.928 [info] Got Pod Event after_op
+
+16:01:26.928 [debug] [args: ["insert into foo values (1), (2)"], command: "pod.lispyclouds.sqlite/execute!", id: "018f35bf-6590-7694-a2f5-b45d6c1f3396", message: "d4:args35:[\"insert into foo values (1), (2)\"]2:id36:018f35bf-6590-7694-a2f5-b45d6c1f33962:op6:invoke3:var31:pod.lispyclouds.sqlite/execute!e", op: "invoke", result: :ok, pod: %{module: Pod.LispyClouds.SQLite, pid: 7915, manifest: Pod.LispyClouds.SQLite.Manifest}]
+
+16:01:26.929 [info] Invoke command in Pod
+
+16:01:26.938 [debug] [args: ["select * from foo"], command: "execute!", module: Pod.LispyClouds.SQLite]
+
+16:01:26.938 [info] Got Pod Event before_op
+
+16:01:26.938 [debug] [args: ["select * from foo"], command: "pod.lispyclouds.sqlite/execute!", id: "018f35bf-659a-7bf8-b912-098a0b14c8dc", message: "d4:args21:[\"select * from foo\"]2:id36:018f35bf-659a-7bf8-b912-098a0b14c8dc2:op6:invoke3:var31:pod.lispyclouds.sqlite/execute!e", op: "invoke", result: %{}, pod: %{module: Pod.LispyClouds.SQLite, pid: 7915, manifest: Pod.LispyClouds.SQLite.Manifest}]
+
+16:01:26.939 [info] Sending Message to Pod Elixir.Pod.LispyClouds.SQLite
+
+16:01:26.939 [info] Got Pod Event after_op
+
+16:01:26.939 [debug] [args: ["select * from foo"], command: "pod.lispyclouds.sqlite/execute!", id: "018f35bf-659a-7bf8-b912-098a0b14c8dc", message: "d4:args21:[\"select * from foo\"]2:id36:018f35bf-659a-7bf8-b912-098a0b14c8dc2:op6:invoke3:var31:pod.lispyclouds.sqlite/execute!e", op: "invoke", result: :ok, pod: %{module: Pod.LispyClouds.SQLite, pid: 7915, manifest: Pod.LispyClouds.SQLite.Manifest}]
+
+16:01:27.047 [info] Got Pod Success Response
+
+16:01:27.048 [debug] [id: 7915, raw: %{pid: 7915, origin: :stdout, response: "d6:format4:json10:namespacesld4:name22:pod.lispyclouds.sqlite4:varsld4:name8:execute!eeeee"}, status: :ok, result: [], pod: %{module: Pod.LispyClouds.SQLite, pid: 7915, manifest: Pod.LispyClouds.SQLite.Manifest}]
+
+16:01:27.050 [info] Got Pod Success Response
+
+16:01:27.050 [debug] [id: "018f35bf-658e-7ac6-ad20-3eaadd97065d", raw: %{pid: 7915, origin: :stdout, response: "d2:id36:018f35bf-658e-7ac6-ad20-3eaadd97065d6:statusl4:donee5:value2:[]e"}, status: :ok, result: [], pod: %{module: Pod.LispyClouds.SQLite, pid: 7915, manifest: Pod.LispyClouds.SQLite.Manifest}]
+
+16:01:27.052 [info] Got Pod Success Response
+
+16:01:27.052 [debug] [id: "018f35bf-658f-761a-ad35-f9da6d1a0384", raw: %{pid: 7915, origin: :stdout, response: "d2:id36:018f35bf-658f-761a-ad35-f9da6d1a03846:statusl4:donee5:value2:[]e"}, status: :ok, result: [], pod: %{module: Pod.LispyClouds.SQLite, pid: 7915, manifest: Pod.LispyClouds.SQLite.Manifest}]
+
+16:01:27.055 [info] Got Pod Success Response
+
+16:01:27.055 [debug] [id: "018f35bf-6590-7694-a2f5-b45d6c1f3396", raw: %{pid: 7915, origin: :stdout, response: "d2:id36:018f35bf-6590-7694-a2f5-b45d6c1f33966:statusl4:donee5:value2:[]e"}, status: :ok, result: [], pod: %{module: Pod.LispyClouds.SQLite, pid: 7915, manifest: Pod.LispyClouds.SQLite.Manifest}]
+
+16:01:27.058 [info] Got Pod Success Response
+
+16:01:27.058 [debug] [id: "018f35bf-659a-7bf8-b912-098a0b14c8dc", raw: %{pid: 7915, origin: :stdout, response: "d2:id36:018f35bf-659a-7bf8-b912-098a0b14c8dc6:statusl4:donee5:value10:[[1], [2]]e"}, status: :ok, result: [[1], [2]], pod: %{module: Pod.LispyClouds.SQLite, pid: 7915, manifest: Pod.LispyClouds.SQLite.Manifest}]
+
+16:01:28.940 [info] Stopping all pods
+
+16:01:28.940 [info] Stopping Pod Elixir.Pod.LispyClouds.SQLite
+
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+[%{pid: 7915, stop: :ok, pod: Pod.LispyClouds.SQLite}]
+```

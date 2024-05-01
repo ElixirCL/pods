@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.32.1">
+    <meta name="project" content="Elixir Pods v1.0.0">
+
+      <meta name="author" content="AUTHORS.md">
+
+
+    <title>Elixir Pods — Elixir Pods v1.0.0</title>
+    <link rel="stylesheet" href="dist/html-elixir-2C5PUTIB.css" />
+
+
+    <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
+    <script src="dist/handlebars.templates-IHH6HKET.js"></script>
+    <script src="dist/sidebar_items-E8B85156.js"></script>
+    <script src="docs_config.js"></script>
+    <script async src="dist/html-GXQ6W6IF.js"></script>
+
+
+  </head>
+  <body data-type="extras" class="page-extra">
+    <script>
+
+      try {
+        var settings = JSON.parse(localStorage.getItem('ex_doc:settings') || '{}');
+
+        if (settings.theme === 'dark' ||
+           ((settings.theme === 'system' || settings.theme == null) &&
+             window.matchMedia('(prefers-color-scheme: dark)').matches)
+           ) {
+          document.body.classList.add('dark')
+        }
+      } catch (error) { }
+    </script>
+
+<div class="body-wrapper">
+
+<button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
+
+<nav id="sidebar" class="sidebar">
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectInfo">
+
+      <div>
+        <a href="https://github.com/ElixirCL/pods" class="sidebar-projectName" translate="no">
+Elixir Pods
+        </a>
+        <div class="sidebar-projectVersion" translate="no">
+          v1.0.0
+        </div>
+      </div>
+    </div>
+    <ul id="sidebar-listNav" class="sidebar-listNav" role="tablist">
+      <li>
+        <button id="extras-list-tab-button" role="tab" data-type="extras" aria-controls="extras-tab-panel" aria-selected="true" tabindex="0">
+Pages
+        </button>
+      </li>
+
+        <li>
+          <button id="modules-list-tab-button" role="tab" data-type="modules" aria-controls="modules-tab-panel" aria-selected="false" tabindex="-1">
+            Modules
+          </button>
+        </li>
+
+
+    </ul>
+  </div>
+
+  <div id="extras-tab-panel" class="sidebar-tabpanel" role="tabpanel" aria-labelledby="extras-list-tab-button">
+    <ul id="extras-full-list" class="full-list"></ul>
+  </div>
+
+    <div id="modules-tab-panel" class="sidebar-tabpanel" role="tabpanel" aria-labelledby="modules-list-tab-button" hidden>
+      <ul id="modules-full-list" class="full-list"></ul>
+    </div>
+
+
+</nav>
+
+<main class="content">
+  <output role="status" id="toast"></output>
+
+  <div id="content" class="content-inner">
+    <div class="top-search">
+      <div class="search-settings">
+        <form class="search-bar" action="search.html">
+          <label class="search-label">
+            <span class="sr-only">Search documentation of Elixir Pods</span>
+            <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+          </label>
+          <button type="submit" class="search-button" aria-label="Submit Search">
+            <i class="ri-search-2-line ri-lg" aria-hidden="true" title="Submit search"></i>
+          </button>
+          <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+            <i class="ri-close-line ri-lg" title="Cancel search"></i>
+          </button>
+        </form>
+        <div class="autocomplete">
+        </div>
+        <button class="icon-settings display-settings">
+          <i class="ri-settings-3-line"></i>
+          <span class="sr-only">Settings</span>
+        </button>
+      </div>
+    </div>
+
+<div id="top-content">
+  <h1>
+
+      <a href="https://github.com/ElixirCL/pods/blob/main/README.md#L1" title="View Source" class="icon-action" rel="help">
+        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        <span class="sr-only">View Source</span>
+      </a>
+
+
+    <span>Elixir Pods</span>
+  </h1>
+
+<p><em>Elixir Pods</em> is a way of communication between <em>Elixir</em> and a service
+implemented in any programming language (<code class="inline">pod</code>). This service must adhere to a simple protocol (<code class="inline">pod protocol</code>) that uses standard and battle tested tools (<code class="inline">stdin</code>, <code class="inline">stdout</code>, <code class="inline">bencode</code> and <code class="inline">json</code>) for it's implementation.</p><p>The main inspiration for this is <a href="https://github.com/babashka/pods">Babashka Pods</a>.</p><p>Basically is a command line tool that has an infinite bucle (<code class="inline">while true</code>)
+that listen to commands in <code class="inline">stdin</code> and outputs the results in <code class="inline">stdout</code>.</p><p>Note how every component is fully customizable, so you can implement
+those with your own tools and configurations.</p><pre><code class="mermaid">sequenceDiagram
+    Pod Client-&gt;&gt;+Pod Service: {:ok, &quot;start&quot;}
+    Pod Service--&gt;&gt;-Pod Client: {:ok, os_pid}
+    Pod Client-&gt;&gt;+Pod Service: {:ok, {os_pid, &quot;describe&quot;}}
+    Pod Service--&gt;&gt;-Pod Client: {:ok, description}
+    Pod Client-&gt;&gt;+Pod Service: {:ok, {os_pid, {&quot;invoke&quot;, params}}}
+    Pod Service--&gt;&gt;-Pod Client: {:ok, result}
+    Pod Client-&gt;&gt;+Pod Service: {:ok, {os_pid, &quot;shutdown&quot;}}
+    Pod Service--&gt;&gt;-Pod Client: {:ok, &quot;stop&quot;}</code></pre><h2 id="implementing-a-pod" class="section-heading">
+  <a href="#implementing-a-pod" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Implementing a Pod</span>
+</h2>
+<p>You can implement the pods with any technology and a simple <em>Elixir</em> wrapper to expose their API.</p><ul><li><code class="inline">artifacts</code>: The directory where the external code executables will be stored.</li><li><code class="inline">pod.ex</code>: The main public api for the pod.</li><li><code class="inline">manifest.ex</code>: Some helper functions to have more information about the pod.</li></ul><p>If you want to debug you can use standard tools such as stdin and stdout. In Unix systems you can access by using (1 stdout, 2 stderr).</p><pre><code class="makeup bash" translate="no"><span class="">  cat /proc/&lt;pid&gt;/fd/1
+</span></code></pre><p>An <em>Elixir Pod</em> must follow some simple rules:</p><ul><li>An infinite function (<code class="inline">while true</code>).</li><li>Reads from <code class="inline">stdin</code> (in streaming mode).</li><li>Writes to <code class="inline">stdout</code> (success and errors) and <code class="inline">stderr</code> (exceptions).</li><li>Follows <a href="pod_protocol.html">Elixir Pods</a> format.</li><li>At least implements the <code class="inline">describe</code> and <code class="inline">invoke</code> operators.</li><li>Encodes messages with <a href="https://en.wikipedia.org/wiki/Bencode">bencode</a>.</li><li>Encodes payload with <em>JSON</em>.</li></ul><h2 id="installation" class="section-heading">
+  <a href="#installation" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Installation</span>
+</h2>
+<p>If <a href="https://hex.pm/docs/publish">available in Hex</a>, the package can be installed
+by adding <code class="inline">pods</code> to your list of dependencies in <code class="inline">mix.exs</code>:</p><pre><code class="makeup elixir" translate="no"><span class="kd">def</span><span class="w"> </span><span class="nf">deps</span><span class="w"> </span><span class="k" data-group-id="5897498754-1">do</span><span class="w">
+  </span><span class="p" data-group-id="5897498754-2">[</span><span class="w">
+    </span><span class="p" data-group-id="5897498754-3">{</span><span class="ss">:pods</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;~&gt; 1.0.0&quot;</span><span class="p" data-group-id="5897498754-3">}</span><span class="w">
+  </span><span class="p" data-group-id="5897498754-2">]</span><span class="w">
+</span><span class="k" data-group-id="5897498754-1">end</span></code></pre><p>Documentation can be generated with <a href="https://github.com/elixir-lang/ex_doc">ExDoc</a>
+and published on <a href="https://hexdocs.pm">HexDocs</a>. Once published, the docs can
+be found at <a href="https://hexdocs.pm/pods">https://hexdocs.pm/pods</a>.</p>
+</div>
+
+<div class="bottom-actions" id="bottom-actions">
+  <div class="bottom-actions-item">
+
+      <a href="api-reference.html" class="bottom-actions-button" rel="prev">
+        <span class="subheader">
+          ← Previous Page
+        </span>
+        <span class="title">
+API Reference
+        </span>
+      </a>
+
+  </div>
+  <div class="bottom-actions-item">
+
+      <a href="license.html" class="bottom-actions-button" rel="next">
+        <span class="subheader">
+          Next Page →
+        </span>
+        <span class="title">
+Mozilla Public License Version 2.0
+        </span>
+      </a>
+
+  </div>
+</div>
+    <footer class="footer">
+      <p>
+
+          <span class="line">
+            <a href="https://hex.pm/packages/pods/1.0.0" class="footer-hex-package">Hex Package</a>
+
+            <a href="https://preview.hex.pm/preview/pods/1.0.0">Hex Preview</a>
+
+              (<a href="https://preview.hex.pm/preview/pods/1.0.0/show/README.md">current file</a>)
+
+          </span>
+
+        <span class="line">
+          <button class="a-main footer-button display-quick-switch" title="Search HexDocs packages">
+            Search HexDocs
+          </button>
+
+            <a href="Elixir Pods.epub" title="ePub version">
+              Download ePub version
+            </a>
+
+        </span>
+      </p>
+
+      <p class="built-using">
+        Built using
+        <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.32.1) for the
+
+          <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
+      </p>
+
+    </footer>
+  </div>
+</main>
+</div>
+
+
+  </body>
+</html>

@@ -1,4 +1,0 @@
-; We will use babashka pods to install the artifacts
-; we only pin the desired version
-(require '[babashka.pods :as pods])
-(pods/load-pod 'org.babashka/go-sqlite3 "0.1.0")

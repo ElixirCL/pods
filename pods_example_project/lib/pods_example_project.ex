@@ -1,2 +1,0 @@
-defmodule PodsExampleProject do
-end

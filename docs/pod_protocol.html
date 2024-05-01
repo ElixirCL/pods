@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.32.1">
+    <meta name="project" content="Elixir Pods v1.0.0">
+
+      <meta name="author" content="AUTHORS.md">
+
+
+    <title>Elixir Pods: Pod Protocol — Elixir Pods v1.0.0</title>
+    <link rel="stylesheet" href="dist/html-elixir-2C5PUTIB.css" />
+
+
+    <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
+    <script src="dist/handlebars.templates-IHH6HKET.js"></script>
+    <script src="dist/sidebar_items-E8B85156.js"></script>
+    <script src="docs_config.js"></script>
+    <script async src="dist/html-GXQ6W6IF.js"></script>
+
+
+  </head>
+  <body data-type="extras" class="page-extra">
+    <script>
+
+      try {
+        var settings = JSON.parse(localStorage.getItem('ex_doc:settings') || '{}');
+
+        if (settings.theme === 'dark' ||
+           ((settings.theme === 'system' || settings.theme == null) &&
+             window.matchMedia('(prefers-color-scheme: dark)').matches)
+           ) {
+          document.body.classList.add('dark')
+        }
+      } catch (error) { }
+    </script>
+
+<div class="body-wrapper">
+
+<button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
+
+<nav id="sidebar" class="sidebar">
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectInfo">
+
+      <div>
+        <a href="https://github.com/ElixirCL/pods" class="sidebar-projectName" translate="no">
+Elixir Pods
+        </a>
+        <div class="sidebar-projectVersion" translate="no">
+          v1.0.0
+        </div>
+      </div>
+    </div>
+    <ul id="sidebar-listNav" class="sidebar-listNav" role="tablist">
+      <li>
+        <button id="extras-list-tab-button" role="tab" data-type="extras" aria-controls="extras-tab-panel" aria-selected="true" tabindex="0">
+Pages
+        </button>
+      </li>
+
+        <li>
+          <button id="modules-list-tab-button" role="tab" data-type="modules" aria-controls="modules-tab-panel" aria-selected="false" tabindex="-1">
+            Modules
+          </button>
+        </li>
+
+
+    </ul>
+  </div>
+
+  <div id="extras-tab-panel" class="sidebar-tabpanel" role="tabpanel" aria-labelledby="extras-list-tab-button">
+    <ul id="extras-full-list" class="full-list"></ul>
+  </div>
+
+    <div id="modules-tab-panel" class="sidebar-tabpanel" role="tabpanel" aria-labelledby="modules-list-tab-button" hidden>
+      <ul id="modules-full-list" class="full-list"></ul>
+    </div>
+
+
+</nav>
+
+<main class="content">
+  <output role="status" id="toast"></output>
+
+  <div id="content" class="content-inner">
+    <div class="top-search">
+      <div class="search-settings">
+        <form class="search-bar" action="search.html">
+          <label class="search-label">
+            <span class="sr-only">Search documentation of Elixir Pods</span>
+            <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+          </label>
+          <button type="submit" class="search-button" aria-label="Submit Search">
+            <i class="ri-search-2-line ri-lg" aria-hidden="true" title="Submit search"></i>
+          </button>
+          <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+            <i class="ri-close-line ri-lg" title="Cancel search"></i>
+          </button>
+        </form>
+        <div class="autocomplete">
+        </div>
+        <button class="icon-settings display-settings">
+          <i class="ri-settings-3-line"></i>
+          <span class="sr-only">Settings</span>
+        </button>
+      </div>
+    </div>
+
+<div id="top-content">
+  <h1>
+
+      <a href="https://github.com/ElixirCL/pods/blob/main/POD_PROTOCOL.md#L1" title="View Source" class="icon-action" rel="help">
+        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        <span class="sr-only">View Source</span>
+      </a>
+
+
+    <span>Elixir Pods: Pod Protocol</span>
+  </h1>
+
+<p>This protocol is adapted from <a href="https://github.com/babashka/pods">Babashka Pods</a>.
+This protocol must be implemented by any <em>Pod Service</em>.</p><p>The <em>Pod Client</em> (<code class="inline">client</code>) is the <em>Elixir</em> code that connects to the <em>Pod Service</em> (<code class="inline">pod</code>).</p><p>Exchange of messages between pod client and the pod happens in the bencode format. <a href="https://en.wikipedia.org/wiki/Bencode">Bencode</a> is a bare-bones format that only has four types:</p><ul><li>integers</li><li>lists</li><li>dictionaries (maps)</li><li>byte strings</li></ul><p>The recommended library for processing <em>Bencode</em> in <em>Elixir</em> is <a href="https://github.com/folz/bento">https://github.com/folz/bento</a>.</p><p>Additionally, payloads like args (arguments) or value (a function return value) are encoded in either <em>JSON</em> or <em>Transit JSON</em> (depends on the pod implementation).</p><h2 id="environment" class="section-heading">
+  <a href="#environment" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Environment</span>
+</h2>
+<p>The pod client will set the <code class="inline">ELIXIR_POD</code> environment variable to <code class="inline">true</code> when starting the pod. This can be used by the service program (<code class="inline">pod</code>) to determine whether it should behave as a pod or not.</p><h2 id="operands" class="section-heading">
+  <a href="#operands" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Operands</span>
+</h2>
+<p>Operands must be implemented on each <code class="inline">pod</code>.
+Operands executes without a namespace and arguments.
+There are three main operands <code class="inline">describe</code>, <code class="inline">invoke</code> and <code class="inline">shutdown</code>.</p><h3 id="describe" class="section-heading">
+  <a href="#describe" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text"><code class="inline">describe</code></span>
+</h3>
+<p>This operand will return the description of the <code class="inline">pod</code>. It's the first
+operand that will be called after the start of the service by the pod client.</p><p>The following is a <code class="inline">map</code> with example <code class="inline">describe</code> for the <code class="inline">demo pod</code>.
+Note that the final response will be encoded in <code class="inline">bencode</code>.</p><p><strong>call</strong></p><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="0202851474-1">%{</span><span class="w">
+  </span><span class="ss">op</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;describe&quot;</span><span class="p">,</span><span class="w">
+  </span><span class="ss">id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;018f2732-9ce5-726a-a1b4-acb86c3099c6&quot;</span><span class="w"> </span><span class="c1"># uuidv7</span><span class="w">
+</span><span class="p" data-group-id="0202851474-1">}</span><span class="w">
+</span><span class="o">|&gt;</span><span class="w"> </span><span class="nc">Bento</span><span class="o">.</span><span class="n">encode!</span><span class="p" data-group-id="0202851474-2">(</span><span class="p" data-group-id="0202851474-2">)</span></code></pre><p><strong>response</strong></p><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="8034546643-1">%{</span><span class="w">
+  </span><span class="ss">format</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;json&quot;</span><span class="p">,</span><span class="w">
+  </span><span class="ss">id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;018f2732-9ce5-726a-a1b4-acb86c3099c6&quot;</span><span class="w"> </span><span class="c1"># same as the called operation</span><span class="w">
+  </span><span class="ss">namespaces</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="8034546643-2">[</span><span class="w">
+    </span><span class="p" data-group-id="8034546643-3">%{</span><span class="w">
+      </span><span class="ss">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;pod.example.demo&quot;</span><span class="p">,</span><span class="w">
+      </span><span class="ss">vars</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="8034546643-4">[</span><span class="w">
+        </span><span class="p" data-group-id="8034546643-5">%{</span><span class="w">
+          </span><span class="ss">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;add&quot;</span><span class="p">,</span><span class="w">
+          </span><span class="ss">meta</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="8034546643-6">%{</span><span class="w">
+            </span><span class="ss">shortdoc</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;arithmetic addition of 2 arguments&quot;</span><span class="p">,</span><span class="w">
+            </span><span class="ss">spec</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;(a :: int(), b :: int()) :: int()&quot;</span><span class="w">
+          </span><span class="p" data-group-id="8034546643-6">}</span><span class="w">
+      </span><span class="p" data-group-id="8034546643-5">}</span><span class="p" data-group-id="8034546643-4">]</span><span class="w">
+    </span><span class="p" data-group-id="8034546643-3">}</span><span class="w">
+  </span><span class="p" data-group-id="8034546643-2">]</span><span class="w">
+</span><span class="p" data-group-id="8034546643-1">}</span><span class="w">
+</span><span class="o">|&gt;</span><span class="w"> </span><span class="nc">Bento</span><span class="o">.</span><span class="n">encode!</span><span class="p" data-group-id="8034546643-7">(</span><span class="p" data-group-id="8034546643-7">)</span></code></pre><ul><li><code class="inline">format</code>: which encoding will used by the payloads and values (<code class="inline">json</code>).</li><li><code class="inline">namespaces</code>: provides the identifier for all commands.</li><li><code class="inline">name</code>: the name for the namespace.</li><li><code class="inline">vars</code>: functions that the namespace support. In this example, for calling the function <code class="inline">add</code> the client will send <code class="inline">pod.example.demo/add</code>.</li><li><code class="inline">meta</code>: optional information about the functions.</li></ul><h3 id="invoke" class="section-heading">
+  <a href="#invoke" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text"><code class="inline">invoke</code></span>
+</h3>
+<p>The <code class="inline">invoke</code> operand will execute a function defined in <code class="inline">var</code>, and return it's result (async).</p><p><strong>call</strong></p><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="5528075705-1">%{</span><span class="w">
+  </span><span class="ss">op</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;invoke&quot;</span><span class="p">,</span><span class="w">
+  </span><span class="ss">id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;018f277a-7ccc-7678-8b8b-10bbc7374c05&quot;</span><span class="p">,</span><span class="w">
+  </span><span class="ss">var</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;com.example.pod/add&quot;</span><span class="p">,</span><span class="w">
+  </span><span class="ss">args</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="5528075705-2">[</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p" data-group-id="5528075705-2">]</span><span class="p">,</span><span class="w">
+  </span><span class="ss">opts</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="5528075705-3">[</span><span class="p" data-group-id="5528075705-3">]</span><span class="w"> </span><span class="c1"># additional options</span><span class="w">
+</span><span class="p" data-group-id="5528075705-1">}</span><span class="w">
+</span><span class="o">|&gt;</span><span class="w"> </span><span class="nc">Bento</span><span class="o">.</span><span class="n">encode!</span><span class="p" data-group-id="5528075705-4">(</span><span class="p" data-group-id="5528075705-4">)</span></code></pre><p><strong>response</strong></p><p>The successful response will have <code class="inline">status: :ok</code> and a <code class="inline">value</code> with the result of the function.</p><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="2833746581-1">%{</span><span class="w">
+  </span><span class="ss">id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;018f277a-7ccc-7678-8b8b-10bbc7374c05&quot;</span><span class="p">,</span><span class="w">
+  </span><span class="ss">var</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;com.example.pod/add&quot;</span><span class="p">,</span><span class="w">
+  </span><span class="ss">value</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w">
+  </span><span class="ss">status</span><span class="p">:</span><span class="w"> </span><span class="ss">:ok</span><span class="w">
+</span><span class="p" data-group-id="2833746581-1">}</span><span class="w">
+</span><span class="o">|&gt;</span><span class="w"> </span><span class="nc">Bento</span><span class="o">.</span><span class="n">encode!</span><span class="p" data-group-id="2833746581-2">(</span><span class="p" data-group-id="2833746581-2">)</span></code></pre><p><strong>error response</strong></p><p>If the operation was terminated with error, the response will have <code class="inline">status: :error</code>, sent to <code class="inline">stdout</code> and can be similar to:</p><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="6740013852-1">%{</span><span class="w">
+  </span><span class="ss">id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;018f277a-7ccc-7678-8b8b-10bbc7374c05&quot;</span><span class="p">,</span><span class="w">
+  </span><span class="ss">var</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;com.example.pod/add&quot;</span><span class="p">,</span><span class="w">
+  </span><span class="ss">error</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="6740013852-2">%{</span><span class="w">
+    </span><span class="ss">code</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;com.example.pod/errors/403&quot;</span><span class="p">,</span><span class="w"> </span><span class="c1"># can be any value, maybe http codes would be good</span><span class="w">
+    </span><span class="ss">message</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Illegal input&quot;</span><span class="p">,</span><span class="w">
+    </span><span class="ss">data</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="6740013852-3">%{</span><span class="w">
+      </span><span class="ss">input</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="6740013852-4">[</span><span class="s">&quot;one&quot;</span><span class="p" data-group-id="6740013852-4">]</span><span class="p">,</span><span class="w"> </span><span class="c1"># the params received</span><span class="w">
+      </span><span class="ss">opts</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="6740013852-5">[</span><span class="p" data-group-id="6740013852-5">]</span><span class="w">
+    </span><span class="p" data-group-id="6740013852-3">}</span><span class="w">
+  </span><span class="p" data-group-id="6740013852-2">}</span><span class="w">
+  </span><span class="ss">status</span><span class="p">:</span><span class="w"> </span><span class="ss">:error</span><span class="w">
+</span><span class="p" data-group-id="6740013852-1">}</span><span class="w">
+</span><span class="o">|&gt;</span><span class="w"> </span><span class="nc">Bento</span><span class="o">.</span><span class="n">encode!</span><span class="p" data-group-id="6740013852-6">(</span><span class="p" data-group-id="6740013852-6">)</span></code></pre><h3 id="shutdown" class="section-heading">
+  <a href="#shutdown" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text"><code class="inline">shutdown</code></span>
+</h3>
+<p>The <code class="inline">shutdown</code> operand can optionally be included in the <code class="inline">pod</code> service. It is
+called by the <code class="inline">pod client</code> when it requires the pod to stop.</p><p>The client will kill the <code class="inline">pod</code> in two contexts:</p><ol><li>When the client stops, all pods will be killed.</li><li>When the client receives the <code class="inline">shutdown</code> response from the <code class="inline">pod</code>.</li></ol><p><strong>call</strong></p><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="3530327930-1">%{</span><span class="w">
+  </span><span class="ss">op</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;shutdown&quot;</span><span class="p">,</span><span class="w">
+  </span><span class="ss">id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;018f279a-e1a7-7b7c-a3b5-7e469faa6ee2&quot;</span><span class="w"> </span><span class="c1"># uuidv7</span><span class="w">
+</span><span class="p" data-group-id="3530327930-1">}</span><span class="w">
+</span><span class="o">|&gt;</span><span class="w"> </span><span class="nc">Bento</span><span class="o">.</span><span class="n">encode!</span><span class="p" data-group-id="3530327930-2">(</span><span class="p" data-group-id="3530327930-2">)</span></code></pre><p><strong>response</strong></p><p>The <code class="inline">pod</code> will send the <code class="inline">shutdown</code> response payload when is ready to be killed by the process manager, upon receiving this respose the pod client process manager will kill the pod process by its <code class="inline">pid</code>.</p><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="8675617792-1">%{</span><span class="w">
+  </span><span class="ss">id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;018f279a-e1a7-7b7c-a3b5-7e469faa6ee2&quot;</span><span class="p">,</span><span class="w">
+  </span><span class="ss">op</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;shutdown&quot;</span><span class="p">,</span><span class="w">
+  </span><span class="ss">status</span><span class="p">:</span><span class="w"> </span><span class="ss">:ok</span><span class="w">
+</span><span class="p" data-group-id="8675617792-1">}</span><span class="w">
+</span><span class="o">|&gt;</span><span class="w"> </span><span class="nc">Bento</span><span class="o">.</span><span class="n">encode!</span><span class="p" data-group-id="8675617792-2">(</span><span class="p" data-group-id="8675617792-2">)</span></code></pre><h2 id="input-and-output" class="section-heading">
+  <a href="#input-and-output" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Input and Output</span>
+</h2>
+<h3 id="stdin" class="section-heading">
+  <a href="#stdin" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text"><code class="inline">stdin</code></span>
+</h3>
+<p>The <code class="inline">pod</code> must read from <code class="inline">stdin</code> (in streams) for input.</p><h3 id="stdout" class="section-heading">
+  <a href="#stdout" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text"><code class="inline">stdout</code></span>
+</h3>
+<p>The <code class="inline">pod</code> must write to <code class="inline">stdout</code> for output. <code class="inline">stdout</code> will be used for both
+success and errors (normal operation results).</p><h3 id="stderr" class="section-heading">
+  <a href="#stderr" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text"><code class="inline">stderr</code></span>
+</h3>
+<p>For exceptions that the <code class="inline">pod</code> triggers if anything unexpected happends.</p><h2 id="permissions" class="section-heading">
+  <a href="#permissions" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Permissions</span>
+</h2>
+<p>The recommended <code class="inline">pod</code> is a single command that will
+be an executable. (<code class="inline">chmod +x</code>).</p>
+</div>
+
+<div class="bottom-actions" id="bottom-actions">
+  <div class="bottom-actions-item">
+
+      <a href="authors.html" class="bottom-actions-button" rel="prev">
+        <span class="subheader">
+          ← Previous Page
+        </span>
+        <span class="title">
+Elixir Pods Authors
+        </span>
+      </a>
+
+  </div>
+  <div class="bottom-actions-item">
+
+  </div>
+</div>
+    <footer class="footer">
+      <p>
+
+          <span class="line">
+            <a href="https://hex.pm/packages/pods/1.0.0" class="footer-hex-package">Hex Package</a>
+
+            <a href="https://preview.hex.pm/preview/pods/1.0.0">Hex Preview</a>
+
+              (<a href="https://preview.hex.pm/preview/pods/1.0.0/show/POD_PROTOCOL.md">current file</a>)
+
+          </span>
+
+        <span class="line">
+          <button class="a-main footer-button display-quick-switch" title="Search HexDocs packages">
+            Search HexDocs
+          </button>
+
+            <a href="Elixir Pods.epub" title="ePub version">
+              Download ePub version
+            </a>
+
+        </span>
+      </p>
+
+      <p class="built-using">
+        Built using
+        <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.32.1) for the
+
+          <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
+      </p>
+
+    </footer>
+  </div>
+</main>
+</div>
+
+
+  </body>
+</html>
