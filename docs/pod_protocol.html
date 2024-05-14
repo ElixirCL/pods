@@ -4,21 +4,21 @@
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="ExDoc v0.32.1">
+    <meta name="generator" content="ExDoc v0.32.2">
     <meta name="project" content="Elixir Pods v1.0.0">
 
       <meta name="author" content="AUTHORS.md">
 
 
     <title>Elixir Pods: Pod Protocol — Elixir Pods v1.0.0</title>
-    <link rel="stylesheet" href="dist/html-elixir-2C5PUTIB.css" />
+    <link rel="stylesheet" href="dist/html-elixir-CDEHVNM4.css" />
 
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
-    <script src="dist/handlebars.templates-IHH6HKET.js"></script>
+    <script src="dist/handlebars.templates-K7URE6B4.js"></script>
     <script src="dist/sidebar_items-E8B85156.js"></script>
     <script src="docs_config.js"></script>
-    <script async src="dist/html-GXQ6W6IF.js"></script>
+    <script async src="dist/html-BHYOTRCH.js"></script>
 
 
   </head>
@@ -147,76 +147,76 @@ There are three main operands <code class="inline">describe</code>, <code class=
 </h3>
 <p>This operand will return the description of the <code class="inline">pod</code>. It's the first
 operand that will be called after the start of the service by the pod client.</p><p>The following is a <code class="inline">map</code> with example <code class="inline">describe</code> for the <code class="inline">demo pod</code>.
-Note that the final response will be encoded in <code class="inline">bencode</code>.</p><p><strong>call</strong></p><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="0202851474-1">%{</span><span class="w">
+Note that the final response will be encoded in <code class="inline">bencode</code>.</p><p><strong>call</strong></p><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="2537915548-1">%{</span><span class="w">
   </span><span class="ss">op</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;describe&quot;</span><span class="p">,</span><span class="w">
   </span><span class="ss">id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;018f2732-9ce5-726a-a1b4-acb86c3099c6&quot;</span><span class="w"> </span><span class="c1"># uuidv7</span><span class="w">
-</span><span class="p" data-group-id="0202851474-1">}</span><span class="w">
-</span><span class="o">|&gt;</span><span class="w"> </span><span class="nc">Bento</span><span class="o">.</span><span class="n">encode!</span><span class="p" data-group-id="0202851474-2">(</span><span class="p" data-group-id="0202851474-2">)</span></code></pre><p><strong>response</strong></p><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="8034546643-1">%{</span><span class="w">
+</span><span class="p" data-group-id="2537915548-1">}</span><span class="w">
+</span><span class="o">|&gt;</span><span class="w"> </span><span class="nc">Bento</span><span class="o">.</span><span class="n">encode!</span><span class="p" data-group-id="2537915548-2">(</span><span class="p" data-group-id="2537915548-2">)</span></code></pre><p><strong>response</strong></p><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="1028004840-1">%{</span><span class="w">
   </span><span class="ss">format</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;json&quot;</span><span class="p">,</span><span class="w">
   </span><span class="ss">id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;018f2732-9ce5-726a-a1b4-acb86c3099c6&quot;</span><span class="w"> </span><span class="c1"># same as the called operation</span><span class="w">
-  </span><span class="ss">namespaces</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="8034546643-2">[</span><span class="w">
-    </span><span class="p" data-group-id="8034546643-3">%{</span><span class="w">
+  </span><span class="ss">namespaces</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="1028004840-2">[</span><span class="w">
+    </span><span class="p" data-group-id="1028004840-3">%{</span><span class="w">
       </span><span class="ss">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;pod.example.demo&quot;</span><span class="p">,</span><span class="w">
-      </span><span class="ss">vars</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="8034546643-4">[</span><span class="w">
-        </span><span class="p" data-group-id="8034546643-5">%{</span><span class="w">
+      </span><span class="ss">vars</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="1028004840-4">[</span><span class="w">
+        </span><span class="p" data-group-id="1028004840-5">%{</span><span class="w">
           </span><span class="ss">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;add&quot;</span><span class="p">,</span><span class="w">
-          </span><span class="ss">meta</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="8034546643-6">%{</span><span class="w">
+          </span><span class="ss">meta</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="1028004840-6">%{</span><span class="w">
             </span><span class="ss">shortdoc</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;arithmetic addition of 2 arguments&quot;</span><span class="p">,</span><span class="w">
             </span><span class="ss">spec</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;(a :: int(), b :: int()) :: int()&quot;</span><span class="w">
-          </span><span class="p" data-group-id="8034546643-6">}</span><span class="w">
-      </span><span class="p" data-group-id="8034546643-5">}</span><span class="p" data-group-id="8034546643-4">]</span><span class="w">
-    </span><span class="p" data-group-id="8034546643-3">}</span><span class="w">
-  </span><span class="p" data-group-id="8034546643-2">]</span><span class="w">
-</span><span class="p" data-group-id="8034546643-1">}</span><span class="w">
-</span><span class="o">|&gt;</span><span class="w"> </span><span class="nc">Bento</span><span class="o">.</span><span class="n">encode!</span><span class="p" data-group-id="8034546643-7">(</span><span class="p" data-group-id="8034546643-7">)</span></code></pre><ul><li><code class="inline">format</code>: which encoding will used by the payloads and values (<code class="inline">json</code>).</li><li><code class="inline">namespaces</code>: provides the identifier for all commands.</li><li><code class="inline">name</code>: the name for the namespace.</li><li><code class="inline">vars</code>: functions that the namespace support. In this example, for calling the function <code class="inline">add</code> the client will send <code class="inline">pod.example.demo/add</code>.</li><li><code class="inline">meta</code>: optional information about the functions.</li></ul><h3 id="invoke" class="section-heading">
+          </span><span class="p" data-group-id="1028004840-6">}</span><span class="w">
+      </span><span class="p" data-group-id="1028004840-5">}</span><span class="p" data-group-id="1028004840-4">]</span><span class="w">
+    </span><span class="p" data-group-id="1028004840-3">}</span><span class="w">
+  </span><span class="p" data-group-id="1028004840-2">]</span><span class="w">
+</span><span class="p" data-group-id="1028004840-1">}</span><span class="w">
+</span><span class="o">|&gt;</span><span class="w"> </span><span class="nc">Bento</span><span class="o">.</span><span class="n">encode!</span><span class="p" data-group-id="1028004840-7">(</span><span class="p" data-group-id="1028004840-7">)</span></code></pre><ul><li><code class="inline">format</code>: which encoding will used by the payloads and values (<code class="inline">json</code>).</li><li><code class="inline">namespaces</code>: provides the identifier for all commands.</li><li><code class="inline">name</code>: the name for the namespace.</li><li><code class="inline">vars</code>: functions that the namespace support. In this example, for calling the function <code class="inline">add</code> the client will send <code class="inline">pod.example.demo/add</code>.</li><li><code class="inline">meta</code>: optional information about the functions.</li></ul><h3 id="invoke" class="section-heading">
   <a href="#invoke" class="hover-link">
     <i class="ri-link-m" aria-hidden="true"></i>
   </a>
   <span class="text"><code class="inline">invoke</code></span>
 </h3>
-<p>The <code class="inline">invoke</code> operand will execute a function defined in <code class="inline">var</code>, and return it's result (async).</p><p><strong>call</strong></p><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="5528075705-1">%{</span><span class="w">
+<p>The <code class="inline">invoke</code> operand will execute a function defined in <code class="inline">var</code>, and return it's result (async).</p><p><strong>call</strong></p><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="3684122306-1">%{</span><span class="w">
   </span><span class="ss">op</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;invoke&quot;</span><span class="p">,</span><span class="w">
   </span><span class="ss">id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;018f277a-7ccc-7678-8b8b-10bbc7374c05&quot;</span><span class="p">,</span><span class="w">
   </span><span class="ss">var</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;com.example.pod/add&quot;</span><span class="p">,</span><span class="w">
-  </span><span class="ss">args</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="5528075705-2">[</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p" data-group-id="5528075705-2">]</span><span class="p">,</span><span class="w">
-  </span><span class="ss">opts</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="5528075705-3">[</span><span class="p" data-group-id="5528075705-3">]</span><span class="w"> </span><span class="c1"># additional options</span><span class="w">
-</span><span class="p" data-group-id="5528075705-1">}</span><span class="w">
-</span><span class="o">|&gt;</span><span class="w"> </span><span class="nc">Bento</span><span class="o">.</span><span class="n">encode!</span><span class="p" data-group-id="5528075705-4">(</span><span class="p" data-group-id="5528075705-4">)</span></code></pre><p><strong>response</strong></p><p>The successful response will have <code class="inline">status: :ok</code> and a <code class="inline">value</code> with the result of the function.</p><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="2833746581-1">%{</span><span class="w">
+  </span><span class="ss">args</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="3684122306-2">[</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p" data-group-id="3684122306-2">]</span><span class="p">,</span><span class="w">
+  </span><span class="ss">opts</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="3684122306-3">[</span><span class="p" data-group-id="3684122306-3">]</span><span class="w"> </span><span class="c1"># additional options</span><span class="w">
+</span><span class="p" data-group-id="3684122306-1">}</span><span class="w">
+</span><span class="o">|&gt;</span><span class="w"> </span><span class="nc">Bento</span><span class="o">.</span><span class="n">encode!</span><span class="p" data-group-id="3684122306-4">(</span><span class="p" data-group-id="3684122306-4">)</span></code></pre><p><strong>response</strong></p><p>The successful response will have <code class="inline">status: :ok</code> and a <code class="inline">value</code> with the result of the function.</p><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="3208012289-1">%{</span><span class="w">
   </span><span class="ss">id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;018f277a-7ccc-7678-8b8b-10bbc7374c05&quot;</span><span class="p">,</span><span class="w">
   </span><span class="ss">var</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;com.example.pod/add&quot;</span><span class="p">,</span><span class="w">
   </span><span class="ss">value</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w">
   </span><span class="ss">status</span><span class="p">:</span><span class="w"> </span><span class="ss">:ok</span><span class="w">
-</span><span class="p" data-group-id="2833746581-1">}</span><span class="w">
-</span><span class="o">|&gt;</span><span class="w"> </span><span class="nc">Bento</span><span class="o">.</span><span class="n">encode!</span><span class="p" data-group-id="2833746581-2">(</span><span class="p" data-group-id="2833746581-2">)</span></code></pre><p><strong>error response</strong></p><p>If the operation was terminated with error, the response will have <code class="inline">status: :error</code>, sent to <code class="inline">stdout</code> and can be similar to:</p><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="6740013852-1">%{</span><span class="w">
+</span><span class="p" data-group-id="3208012289-1">}</span><span class="w">
+</span><span class="o">|&gt;</span><span class="w"> </span><span class="nc">Bento</span><span class="o">.</span><span class="n">encode!</span><span class="p" data-group-id="3208012289-2">(</span><span class="p" data-group-id="3208012289-2">)</span></code></pre><p><strong>error response</strong></p><p>If the operation was terminated with error, the response will have <code class="inline">status: :error</code>, sent to <code class="inline">stdout</code> and can be similar to:</p><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="0417898073-1">%{</span><span class="w">
   </span><span class="ss">id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;018f277a-7ccc-7678-8b8b-10bbc7374c05&quot;</span><span class="p">,</span><span class="w">
   </span><span class="ss">var</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;com.example.pod/add&quot;</span><span class="p">,</span><span class="w">
-  </span><span class="ss">error</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="6740013852-2">%{</span><span class="w">
+  </span><span class="ss">error</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="0417898073-2">%{</span><span class="w">
     </span><span class="ss">code</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;com.example.pod/errors/403&quot;</span><span class="p">,</span><span class="w"> </span><span class="c1"># can be any value, maybe http codes would be good</span><span class="w">
     </span><span class="ss">message</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Illegal input&quot;</span><span class="p">,</span><span class="w">
-    </span><span class="ss">data</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="6740013852-3">%{</span><span class="w">
-      </span><span class="ss">input</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="6740013852-4">[</span><span class="s">&quot;one&quot;</span><span class="p" data-group-id="6740013852-4">]</span><span class="p">,</span><span class="w"> </span><span class="c1"># the params received</span><span class="w">
-      </span><span class="ss">opts</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="6740013852-5">[</span><span class="p" data-group-id="6740013852-5">]</span><span class="w">
-    </span><span class="p" data-group-id="6740013852-3">}</span><span class="w">
-  </span><span class="p" data-group-id="6740013852-2">}</span><span class="w">
+    </span><span class="ss">data</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="0417898073-3">%{</span><span class="w">
+      </span><span class="ss">input</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="0417898073-4">[</span><span class="s">&quot;one&quot;</span><span class="p" data-group-id="0417898073-4">]</span><span class="p">,</span><span class="w"> </span><span class="c1"># the params received</span><span class="w">
+      </span><span class="ss">opts</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="0417898073-5">[</span><span class="p" data-group-id="0417898073-5">]</span><span class="w">
+    </span><span class="p" data-group-id="0417898073-3">}</span><span class="w">
+  </span><span class="p" data-group-id="0417898073-2">}</span><span class="w">
   </span><span class="ss">status</span><span class="p">:</span><span class="w"> </span><span class="ss">:error</span><span class="w">
-</span><span class="p" data-group-id="6740013852-1">}</span><span class="w">
-</span><span class="o">|&gt;</span><span class="w"> </span><span class="nc">Bento</span><span class="o">.</span><span class="n">encode!</span><span class="p" data-group-id="6740013852-6">(</span><span class="p" data-group-id="6740013852-6">)</span></code></pre><h3 id="shutdown" class="section-heading">
+</span><span class="p" data-group-id="0417898073-1">}</span><span class="w">
+</span><span class="o">|&gt;</span><span class="w"> </span><span class="nc">Bento</span><span class="o">.</span><span class="n">encode!</span><span class="p" data-group-id="0417898073-6">(</span><span class="p" data-group-id="0417898073-6">)</span></code></pre><h3 id="shutdown" class="section-heading">
   <a href="#shutdown" class="hover-link">
     <i class="ri-link-m" aria-hidden="true"></i>
   </a>
   <span class="text"><code class="inline">shutdown</code></span>
 </h3>
 <p>The <code class="inline">shutdown</code> operand can optionally be included in the <code class="inline">pod</code> service. It is
-called by the <code class="inline">pod client</code> when it requires the pod to stop.</p><p>The client will kill the <code class="inline">pod</code> in two contexts:</p><ol><li>When the client stops, all pods will be killed.</li><li>When the client receives the <code class="inline">shutdown</code> response from the <code class="inline">pod</code>.</li></ol><p><strong>call</strong></p><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="3530327930-1">%{</span><span class="w">
+called by the <code class="inline">pod client</code> when it requires the pod to stop.</p><p>The client will kill the <code class="inline">pod</code> in two contexts:</p><ol><li>When the client stops, all pods will be killed.</li><li>When the client receives the <code class="inline">shutdown</code> response from the <code class="inline">pod</code>.</li></ol><p><strong>call</strong></p><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="7466338901-1">%{</span><span class="w">
   </span><span class="ss">op</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;shutdown&quot;</span><span class="p">,</span><span class="w">
   </span><span class="ss">id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;018f279a-e1a7-7b7c-a3b5-7e469faa6ee2&quot;</span><span class="w"> </span><span class="c1"># uuidv7</span><span class="w">
-</span><span class="p" data-group-id="3530327930-1">}</span><span class="w">
-</span><span class="o">|&gt;</span><span class="w"> </span><span class="nc">Bento</span><span class="o">.</span><span class="n">encode!</span><span class="p" data-group-id="3530327930-2">(</span><span class="p" data-group-id="3530327930-2">)</span></code></pre><p><strong>response</strong></p><p>The <code class="inline">pod</code> will send the <code class="inline">shutdown</code> response payload when is ready to be killed by the process manager, upon receiving this respose the pod client process manager will kill the pod process by its <code class="inline">pid</code>.</p><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="8675617792-1">%{</span><span class="w">
+</span><span class="p" data-group-id="7466338901-1">}</span><span class="w">
+</span><span class="o">|&gt;</span><span class="w"> </span><span class="nc">Bento</span><span class="o">.</span><span class="n">encode!</span><span class="p" data-group-id="7466338901-2">(</span><span class="p" data-group-id="7466338901-2">)</span></code></pre><p><strong>response</strong></p><p>The <code class="inline">pod</code> will send the <code class="inline">shutdown</code> response payload when is ready to be killed by the process manager, upon receiving this respose the pod client process manager will kill the pod process by its <code class="inline">pid</code>.</p><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="7386485721-1">%{</span><span class="w">
   </span><span class="ss">id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;018f279a-e1a7-7b7c-a3b5-7e469faa6ee2&quot;</span><span class="p">,</span><span class="w">
   </span><span class="ss">op</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;shutdown&quot;</span><span class="p">,</span><span class="w">
   </span><span class="ss">status</span><span class="p">:</span><span class="w"> </span><span class="ss">:ok</span><span class="w">
-</span><span class="p" data-group-id="8675617792-1">}</span><span class="w">
-</span><span class="o">|&gt;</span><span class="w"> </span><span class="nc">Bento</span><span class="o">.</span><span class="n">encode!</span><span class="p" data-group-id="8675617792-2">(</span><span class="p" data-group-id="8675617792-2">)</span></code></pre><h2 id="input-and-output" class="section-heading">
+</span><span class="p" data-group-id="7386485721-1">}</span><span class="w">
+</span><span class="o">|&gt;</span><span class="w"> </span><span class="nc">Bento</span><span class="o">.</span><span class="n">encode!</span><span class="p" data-group-id="7386485721-2">(</span><span class="p" data-group-id="7386485721-2">)</span></code></pre><h2 id="input-and-output" class="section-heading">
   <a href="#input-and-output" class="hover-link">
     <i class="ri-link-m" aria-hidden="true"></i>
   </a>
@@ -294,7 +294,7 @@ Elixir Pods Authors
 
       <p class="built-using">
         Built using
-        <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.32.1) for the
+        <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.32.2) for the
 
           <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
 

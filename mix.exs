@@ -36,7 +36,14 @@ defmodule Pods.MixProject do
         # The main page in the docs
         main: "examples",
         # logo: "https://raw.githubusercontent.com/ElixirCL/elixircl.github.io/main/assets/logo.png",
-        extras: ["README.md", "LICENSE.md", "CHANGELOG.md", "EXAMPLES.livemd", "AUTHORS.md", "POD_PROTOCOL.md"],
+        extras: [
+          "README.md",
+          "LICENSE.md",
+          "CHANGELOG.md",
+          "EXAMPLES.livemd",
+          "AUTHORS.md",
+          "POD_PROTOCOL.md"
+        ],
         authors: ["AUTHORS.md"],
         output: "docs"
       ]
@@ -60,7 +67,9 @@ defmodule Pods.MixProject do
     [
       {:uuidv7, "~> 0.2"},
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
-      {:ex_doc, "~> 0.27", only: :dev, runtime: false}
+      {:ex_doc, "~> 0.27", only: :dev, runtime: false},
+      {:bento, "~> 1.0", only: [:test]},
+      {:erlexec, "~> 2.0", only: [:test]}
       # {:dep_from_hexpm, "~> 0.3.0"},
       # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
     ]
